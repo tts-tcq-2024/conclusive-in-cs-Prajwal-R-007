@@ -2,22 +2,22 @@ using System;
 
 namespace TypewiseAlertSystem
 {
-    public static class TypewiseAlert
+    public class TypewiseAlert : IBreachDetector, ITemperatureClassifier, IAlertSender
     {
-        public static BreachType InferBreach(double value, double lowerLimit, double upperLimit)
+        public BreachType InferBreach(double value, double lowerLimit, double upperLimit)
         {
             if (value < lowerLimit) return BreachType.TOO_LOW;
             if (value > upperLimit) return BreachType.TOO_HIGH;
             return BreachType.NORMAL;
         }
 
-        public static BreachType ClassifyTemperatureBreach(CoolingType coolingType, double temperatureInC)
+        public BreachType ClassifyTemperatureBreach(CoolingType coolingType, double temperatureInC)
         {
             var limits = GetTemperatureLimits(coolingType);
             return InferBreach(temperatureInC, limits.lowerLimit, limits.upperLimit);
         }
 
-        private static (double lowerLimit, double upperLimit) GetTemperatureLimits(CoolingType coolingType)
+        private (double lowerLimit, double upperLimit) GetTemperatureLimits(CoolingType coolingType)
         {
             return coolingType switch
             {
@@ -28,9 +28,8 @@ namespace TypewiseAlertSystem
             };
         }
 
-        public static void CheckAndAlert(AlertTarget alertTarget, BatteryCharacter batteryChar, double temperatureInC)
+        public void SendAlert(AlertTarget alertTarget, BreachType breachType)
         {
-            BreachType breachType = ClassifyTemperatureBreach(batteryChar.CoolingType, temperatureInC);
             if (alertTarget == AlertTarget.TO_CONTROLLER)
             {
                 SendToController(breachType);
@@ -41,13 +40,13 @@ namespace TypewiseAlertSystem
             }
         }
 
-        private static void SendToController(BreachType breachType)
+        private void SendToController(BreachType breachType)
         {
             const ushort header = 0xfeed;
             Console.WriteLine($"{header} : {breachType}");
         }
 
-        private static void SendToEmail(BreachType breachType)
+        private void SendToEmail(BreachType breachType)
         {
             string recipient = "a.b@c.com";
             string message = GetEmailMessage(breachType);
@@ -57,7 +56,7 @@ namespace TypewiseAlertSystem
             }
         }
 
-        private static string GetEmailMessage(BreachType breachType)
+        private string GetEmailMessage(BreachType breachType)
         {
             return breachType switch
             {
@@ -65,6 +64,12 @@ namespace TypewiseAlertSystem
                 BreachType.TOO_HIGH => "Hi, the temperature is too high",
                 _ => string.Empty
             };
+        }
+
+        public void CheckAndAlert(AlertTarget alertTarget, BatteryCharacter batteryChar, double temperatureInC)
+        {
+            BreachType breachType = ClassifyTemperatureBreach(batteryChar.CoolingType, temperatureInC);
+            SendAlert(alertTarget, breachType);
         }
     }
 }
