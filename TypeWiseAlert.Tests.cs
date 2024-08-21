@@ -7,10 +7,10 @@ namespace TypewiseAlertSystem.Tests
     public class TypewiseAlertTests
     {
         [Theory]
-        [InlineData(25, 0, 35, TypewiseAlert.BreachType.NORMAL)]
-        [InlineData(-5, 0, 35, TypewiseAlert.BreachType.TOO_LOW)]
-        [InlineData(40, 0, 35, TypewiseAlert.BreachType.TOO_HIGH)]
-        public void InferBreach_ShouldReturnCorrectBreachType(double value, double lowerLimit, double upperLimit, TypewiseAlert.BreachType expectedBreachType)
+        [InlineData(25, 0, 35, BreachType.NORMAL)]
+        [InlineData(-5, 0, 35, BreachType.TOO_LOW)]
+        [InlineData(40, 0, 35, BreachType.TOO_HIGH)]
+        public void InferBreach_ShouldReturnCorrectBreachType(double value, double lowerLimit, double upperLimit, BreachType expectedBreachType)
         {
             // Act
             var result = TypewiseAlert.inferBreach(value, lowerLimit, upperLimit);
@@ -20,12 +20,12 @@ namespace TypewiseAlertSystem.Tests
         }
 
         [Theory]
-        [InlineData(TypewiseAlert.CoolingType.PASSIVE_COOLING, 20, TypewiseAlert.BreachType.NORMAL)]
-        [InlineData(TypewiseAlert.CoolingType.PASSIVE_COOLING, -1, TypewiseAlert.BreachType.TOO_LOW)]
-        [InlineData(TypewiseAlert.CoolingType.PASSIVE_COOLING, 36, TypewiseAlert.BreachType.TOO_HIGH)]
-        [InlineData(TypewiseAlert.CoolingType.HI_ACTIVE_COOLING, 20, TypewiseAlert.BreachType.NORMAL)]
-        [InlineData(TypewiseAlert.CoolingType.HI_ACTIVE_COOLING, 46, TypewiseAlert.BreachType.TOO_HIGH)]
-        public void ClassifyTemperatureBreach_ShouldReturnCorrectBreachType(TypewiseAlert.CoolingType coolingType, double temperatureInC, TypewiseAlert.BreachType expectedBreachType)
+        [InlineData(CoolingType.PASSIVE_COOLING, 20, BreachType.NORMAL)]
+        [InlineData(CoolingType.PASSIVE_COOLING, -1, BreachType.TOO_LOW)]
+        [InlineData(CoolingType.PASSIVE_COOLING, 36, BreachType.TOO_HIGH)]
+        [InlineData(CoolingType.HI_ACTIVE_COOLING, 20, BreachType.NORMAL)]
+        [InlineData(CoolingType.HI_ACTIVE_COOLING, 46, BreachType.TOO_HIGH)]
+        public void ClassifyTemperatureBreach_ShouldReturnCorrectBreachType(CoolingType coolingType, double temperatureInC, BreachType expectedBreachType)
         {
             // Act
             var result = TypewiseAlert.classifyTemperatureBreach(coolingType, temperatureInC);
@@ -38,15 +38,15 @@ namespace TypewiseAlertSystem.Tests
         public void CheckAndAlert_ShouldSendToController()
         {
             // Arrange
-            var consoleOutput = new ConsoleOutput();
-            var batteryChar = new TypewiseAlert.BatteryCharacter
+            using var consoleOutput = new ConsoleOutput();
+            var batteryChar = new BatteryCharacter
             {
-                coolingType = TypewiseAlert.CoolingType.PASSIVE_COOLING,
-                brand = "TestBrand"
+                CoolingType = CoolingType.PASSIVE_COOLING,
+                Brand = "TestBrand"
             };
 
             // Act
-            TypewiseAlert.checkAndAlert(TypewiseAlert.AlertTarget.TO_CONTROLLER, batteryChar, 20);
+            TypewiseAlert.checkAndAlert(AlertTarget.TO_CONTROLLER, batteryChar, 20);
 
             // Assert
             Assert.Contains("0xfeed : NORMAL", consoleOutput.GetOutput());
@@ -56,15 +56,15 @@ namespace TypewiseAlertSystem.Tests
         public void CheckAndAlert_ShouldSendToEmail()
         {
             // Arrange
-            var consoleOutput = new ConsoleOutput();
-            var batteryChar = new TypewiseAlert.BatteryCharacter
+            using var consoleOutput = new ConsoleOutput();
+            var batteryChar = new BatteryCharacter
             {
-                coolingType = TypewiseAlert.CoolingType.PASSIVE_COOLING,
-                brand = "TestBrand"
+                CoolingType = CoolingType.PASSIVE_COOLING,
+                Brand = "TestBrand"
             };
 
             // Act
-            TypewiseAlert.checkAndAlert(TypewiseAlert.AlertTarget.TO_EMAIL, batteryChar, -1);
+            TypewiseAlert.checkAndAlert(AlertTarget.TO_EMAIL, batteryChar, -1);
 
             // Assert
             Assert.Contains("To: a.b@c.com", consoleOutput.GetOutput());
@@ -93,4 +93,3 @@ namespace TypewiseAlertSystem.Tests
         }
     }
 }
-
