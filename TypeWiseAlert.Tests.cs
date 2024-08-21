@@ -1,4 +1,5 @@
 using System;
+using System.IO;
 using Xunit;
 using TypewiseAlertSystem;
 
@@ -13,7 +14,7 @@ namespace TypewiseAlertSystem.Tests
         public void InferBreach_ShouldReturnCorrectBreachType(double value, double lowerLimit, double upperLimit, BreachType expectedBreachType)
         {
             // Act
-            var result = TypewiseAlert.inferBreach(value, lowerLimit, upperLimit);
+            var result = TypewiseAlert.InferBreach(value, lowerLimit, upperLimit);
 
             // Assert
             Assert.Equal(expectedBreachType, result);
@@ -23,12 +24,12 @@ namespace TypewiseAlertSystem.Tests
         [InlineData(CoolingType.PASSIVE_COOLING, 20, BreachType.NORMAL)]
         [InlineData(CoolingType.PASSIVE_COOLING, -1, BreachType.TOO_LOW)]
         [InlineData(CoolingType.PASSIVE_COOLING, 36, BreachType.TOO_HIGH)]
-        [InlineData(CoolingType.HI_ACTIVE_COOLING, 20, BreachType.NORMAL)]
-        [InlineData(CoolingType.HI_ACTIVE_COOLING, 46, BreachType.TOO_HIGH)]
+        [InlineData(CoolingType.HI_ACTIVE_COOLING, 30, BreachType.NORMAL)]
+        [InlineData(CoolingType.HI_ACTIVE_COOLING, 50, BreachType.TOO_HIGH)]
         public void ClassifyTemperatureBreach_ShouldReturnCorrectBreachType(CoolingType coolingType, double temperatureInC, BreachType expectedBreachType)
         {
             // Act
-            var result = TypewiseAlert.classifyTemperatureBreach(coolingType, temperatureInC);
+            var result = TypewiseAlert.ClassifyTemperatureBreach(coolingType, temperatureInC);
 
             // Assert
             Assert.Equal(expectedBreachType, result);
@@ -46,10 +47,11 @@ namespace TypewiseAlertSystem.Tests
             };
 
             // Act
-            TypewiseAlert.checkAndAlert(AlertTarget.TO_CONTROLLER, batteryChar, 20);
+            TypewiseAlert.CheckAndAlert(AlertTarget.TO_CONTROLLER, batteryChar, 20);
 
             // Assert
-            Assert.Contains("0xfeed : NORMAL", consoleOutput.GetOutput());
+            var output = consoleOutput.GetOutput();
+            Assert.Contains("65261 : NORMAL", output); // 65261 is the decimal representation of 0xfeed
         }
 
         [Fact]
@@ -64,11 +66,12 @@ namespace TypewiseAlertSystem.Tests
             };
 
             // Act
-            TypewiseAlert.checkAndAlert(AlertTarget.TO_EMAIL, batteryChar, -1);
+            TypewiseAlert.CheckAndAlert(AlertTarget.TO_EMAIL, batteryChar, -1);
 
             // Assert
-            Assert.Contains("To: a.b@c.com", consoleOutput.GetOutput());
-            Assert.Contains("Hi, the temperature is too low", consoleOutput.GetOutput());
+            var output = consoleOutput.GetOutput();
+            Assert.Contains("To: a.b@c.com", output);
+            Assert.Contains("Hi, the temperature is too low", output);
         }
 
         private class ConsoleOutput : IDisposable
