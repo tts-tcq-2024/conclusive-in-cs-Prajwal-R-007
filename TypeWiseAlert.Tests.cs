@@ -1,5 +1,6 @@
 using System;
 using Xunit;
+using TypewiseAlertSystem;
 
 namespace TypewiseAlertSystem.Tests
 {
