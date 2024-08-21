@@ -43,7 +43,4 @@ Think about guiding refactoring-work in your regular/project teams. Think of the
 You have seen a few workflows in this repository. They are quality-gates to prevent duplication, control complexity and prove functionality. Do you think some of them have potential to guide code-improvements in your team? **yes**
 
 During the next four weeks, what improvement do you plan in your code-quality practice? (in your regular work, not in this repository!)
-**1.Manage code complexity
-2. Find optimal solution 
-3.Cover out of box/range testcases in unit testing 
-4.Refactor the old code based on the new code added**
+I have learnt to write the code with less cyclomatic complexity(Less branching), less cognitive complexity(easily understandable by the reviewer)and to write the source codes which are testable. learnt to select the proper naming conventions of the file 
