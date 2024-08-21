@@ -6,10 +6,8 @@ namespace TypewiseAlertSystem
     {
         public static BreachType InferBreach(double value, double lowerLimit, double upperLimit)
         {
-            if (value < lowerLimit)
-                return BreachType.TOO_LOW;
-            if (value > upperLimit)
-                return BreachType.TOO_HIGH;
+            if (value < lowerLimit) return BreachType.TOO_LOW;
+            if (value > upperLimit) return BreachType.TOO_HIGH;
             return BreachType.NORMAL;
         }
 
@@ -52,17 +50,21 @@ namespace TypewiseAlertSystem
         private static void SendToEmail(BreachType breachType)
         {
             string recipient = "a.b@c.com";
-            switch (breachType)
+            string message = GetEmailMessage(breachType);
+            if (!string.IsNullOrEmpty(message))
             {
-                case BreachType.TOO_LOW:
-                    Console.WriteLine($"To: {recipient}\nHi, the temperature is too low\n");
-                    break;
-                case BreachType.TOO_HIGH:
-                    Console.WriteLine($"To: {recipient}\nHi, the temperature is too high\n");
-                    break;
-                case BreachType.NORMAL:
-                    break;
+                Console.WriteLine($"To: {recipient}\n{message}");
             }
+        }
+
+        private static string GetEmailMessage(BreachType breachType)
+        {
+            return breachType switch
+            {
+                BreachType.TOO_LOW => "Hi, the temperature is too low",
+                BreachType.TOO_HIGH => "Hi, the temperature is too high",
+                _ => string.Empty
+            };
         }
     }
 }
