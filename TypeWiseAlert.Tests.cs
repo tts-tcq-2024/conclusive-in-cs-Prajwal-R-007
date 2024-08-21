@@ -7,6 +7,8 @@ namespace TypewiseAlertSystem.Tests
 {
     public class TypewiseAlertTests
     {
+        private readonly TypewiseAlert _typewiseAlert = new TypewiseAlert();
+
         [Theory]
         [InlineData(25, 0, 35, BreachType.NORMAL)]
         [InlineData(-5, 0, 35, BreachType.TOO_LOW)]
@@ -14,7 +16,7 @@ namespace TypewiseAlertSystem.Tests
         public void InferBreach_ShouldReturnCorrectBreachType(double value, double lowerLimit, double upperLimit, BreachType expectedBreachType)
         {
             // Act
-            var result = TypewiseAlert.InferBreach(value, lowerLimit, upperLimit);
+            var result = _typewiseAlert.InferBreach(value, lowerLimit, upperLimit);
 
             // Assert
             Assert.Equal(expectedBreachType, result);
@@ -29,7 +31,7 @@ namespace TypewiseAlertSystem.Tests
         public void ClassifyTemperatureBreach_ShouldReturnCorrectBreachType(CoolingType coolingType, double temperatureInC, BreachType expectedBreachType)
         {
             // Act
-            var result = TypewiseAlert.ClassifyTemperatureBreach(coolingType, temperatureInC);
+            var result = _typewiseAlert.ClassifyTemperatureBreach(coolingType, temperatureInC);
 
             // Assert
             Assert.Equal(expectedBreachType, result);
@@ -47,7 +49,7 @@ namespace TypewiseAlertSystem.Tests
             };
 
             // Act
-            TypewiseAlert.CheckAndAlert(AlertTarget.TO_CONTROLLER, batteryChar, 20);
+            _typewiseAlert.CheckAndAlert(AlertTarget.TO_CONTROLLER, batteryChar, 20);
 
             // Assert
             var output = consoleOutput.GetOutput();
@@ -66,7 +68,7 @@ namespace TypewiseAlertSystem.Tests
             };
 
             // Act
-            TypewiseAlert.CheckAndAlert(AlertTarget.TO_EMAIL, batteryChar, -1);
+            _typewiseAlert.CheckAndAlert(AlertTarget.TO_EMAIL, batteryChar, -1);
 
             // Assert
             var output = consoleOutput.GetOutput();
