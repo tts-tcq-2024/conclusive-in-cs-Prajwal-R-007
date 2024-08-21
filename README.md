@@ -44,6 +44,9 @@ You have seen a few workflows in this repository. They are quality-gates to prev
 
 During the next four weeks, what improvement do you plan in your code-quality practice? (in your regular work, not in this repository!)
 **Manage code complexity**
+
 **Find optimal solution**
+
 **Cover out of box/range testcases in unit testing**
+
 **Refactor the old code based on the new code added**
